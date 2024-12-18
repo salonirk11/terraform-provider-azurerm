@@ -491,6 +491,7 @@ func flattenFirewallPolicyIntrusionDetection(input *firewallpolicies.FirewallPol
 		return []interface{}{
 			map[string]interface{}{
 				"mode":                string(pointer.From(input.Mode)),
+				"profile":             string(pointer.From(input.Profile)),
 				"signature_overrides": signatureOverrides,
 				"traffic_bypass":      trafficBypass,
 			},
@@ -567,6 +568,7 @@ func flattenFirewallPolicyIntrusionDetection(input *firewallpolicies.FirewallPol
 	return []interface{}{
 		map[string]interface{}{
 			"mode":                string(pointer.From(input.Mode)),
+			"profile":             string(pointer.From(input.Profile)),
 			"signature_overrides": signatureOverrides,
 			"traffic_bypass":      trafficBypass,
 			"private_ranges":      privateRanges,
