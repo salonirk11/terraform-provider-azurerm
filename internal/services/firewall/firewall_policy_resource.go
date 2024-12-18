@@ -749,6 +749,14 @@ func resourceFirewallPolicySchema() map[string]*pluginsdk.Schema {
 						}, false),
 						Optional: true,
 					},
+					"profile": {
+						Type: pluginsdk.TypeString,
+						ValidateFunc: validation.StringInSlice([]string{
+							string(firewallpolicies.FirewallPolicyIntrusionDetectionProfileTypeBasic),
+							string(firewallpolicies.FirewallPolicyIntrusionDetectionProfileTypeStandard),
+							string(firewallpolicies.FirewallPolicyIntrusionDetectionProfileTypeAdvanced),
+						}, false),
+					},
 					"signature_overrides": {
 						Type:     pluginsdk.TypeList,
 						Optional: true,
