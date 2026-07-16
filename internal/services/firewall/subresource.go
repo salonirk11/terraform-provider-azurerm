@@ -4,10 +4,10 @@
 package firewall
 
 import (
-	"github.com/hashicorp/go-azure-sdk/resource-manager/network/2025-01-01/firewallpolicies"
+	"github.com/hashicorp/go-azure-sdk/resource-manager/network/2025-07-01/firewallpolicies"
 )
 
-func flattenNetworkSubResourceID(input *[]firewallpolicies.SubResource) []interface{} {
+func flattenNetworkSubResourceID(input *[]firewallpolicies.CommonSubResource) []interface{} {
 	results := make([]interface{}, 0)
 	if input == nil {
 		return results

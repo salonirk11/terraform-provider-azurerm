@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/identity"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/location"
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/tags"
-	"github.com/hashicorp/go-azure-sdk/resource-manager/network/2025-01-01/firewallpolicies"
+	"github.com/hashicorp/go-azure-sdk/resource-manager/network/2025-07-01/firewallpolicies"
 	"github.com/hashicorp/go-azure-sdk/resource-manager/operationalinsights/2020-08-01/workspaces"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-provider-azurerm/helpers/tf"
@@ -58,7 +58,7 @@ func resourceFirewallPolicy() *pluginsdk.Resource {
 }
 
 func resourceFirewallPolicyCreateUpdate(d *pluginsdk.ResourceData, meta interface{}) error {
-	client := meta.(*clients.Client).Network.FirewallPolicies
+	client := meta.(*clients.Client).Network.FirewallPoliciesClient
 	subscriptionId := meta.(*clients.Client).Account.SubscriptionId
 	ctx, cancel := timeouts.ForCreateUpdate(meta.(*clients.Client).StopContext, d)
 	defer cancel()
@@ -104,7 +104,7 @@ func resourceFirewallPolicyCreateUpdate(d *pluginsdk.ResourceData, meta interfac
 	}
 
 	if id, ok := d.GetOk("base_policy_id"); ok {
-		props.Properties.BasePolicy = &firewallpolicies.SubResource{Id: pointer.To(id.(string))}
+		props.Properties.BasePolicy = &firewallpolicies.CommonSubResource{Id: pointer.To(id.(string))}
 	}
 
 	if v, ok := d.GetOk("sku"); ok {
@@ -157,7 +157,7 @@ func resourceFirewallPolicyCreateUpdate(d *pluginsdk.ResourceData, meta interfac
 }
 
 func resourceFirewallPolicyRead(d *pluginsdk.ResourceData, meta interface{}) error {
-	client := meta.(*clients.Client).Network.FirewallPolicies
+	client := meta.(*clients.Client).Network.FirewallPoliciesClient
 	ctx, cancel := timeouts.ForRead(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
@@ -274,7 +274,7 @@ func resourceFirewallPolicySetFlatten(d *pluginsdk.ResourceData, id *firewallpol
 }
 
 func resourceFirewallPolicyDelete(d *pluginsdk.ResourceData, meta interface{}) error {
-	client := meta.(*clients.Client).Network.FirewallPolicies
+	client := meta.(*clients.Client).Network.FirewallPoliciesClient
 	ctx, cancel := timeouts.ForDelete(meta.(*clients.Client).StopContext, d)
 	defer cancel()
 
@@ -426,7 +426,7 @@ func expandFirewallPolicyExplicitProxy(input []interface{}) *firewallpolicies.Ex
 
 func expandFirewallPolicyLogAnalyticsResources(defaultWorkspaceId string, workspaces []interface{}) *firewallpolicies.FirewallPolicyLogAnalyticsResources {
 	output := &firewallpolicies.FirewallPolicyLogAnalyticsResources{
-		DefaultWorkspaceId: &firewallpolicies.SubResource{
+		DefaultWorkspaceId: &firewallpolicies.CommonSubResource{
 			Id: &defaultWorkspaceId,
 		},
 	}
@@ -436,7 +436,7 @@ func expandFirewallPolicyLogAnalyticsResources(defaultWorkspaceId string, worksp
 		workspace := workspace.(map[string]interface{})
 		workspaceList = append(workspaceList, firewallpolicies.FirewallPolicyLogAnalyticsWorkspace{
 			Region: pointer.To(location.Normalize(workspace["firewall_location"].(string))),
-			WorkspaceId: &firewallpolicies.SubResource{
+			WorkspaceId: &firewallpolicies.CommonSubResource{
 				Id: pointer.To(workspace["id"].(string)),
 			},
 		})

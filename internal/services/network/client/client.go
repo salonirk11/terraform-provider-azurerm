@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/go-azure-sdk/resource-manager/network/2025-01-01/networksecurityperimeterassociations"
 	"github.com/hashicorp/go-azure-sdk/resource-manager/network/2025-01-01/networksecurityperimeterprofiles"
 	"github.com/hashicorp/go-azure-sdk/resource-manager/network/2025-01-01/networksecurityperimeters"
+	"github.com/hashicorp/go-azure-sdk/resource-manager/network/2025-07-01/firewallpolicies"
 	"github.com/hashicorp/go-azure-sdk/sdk/client/resourcemanager"
 	"github.com/hashicorp/terraform-provider-azurerm/internal/common"
 )
@@ -24,6 +25,7 @@ type Client struct {
 	BastionHostsClient *bastionhosts.BastionHostsClient
 	// VMSS Data Source requires the Network Interfaces and VMSSPublicIpAddresses client from `2023-09-01` for the `ListVirtualMachineScaleSetVMNetworkInterfacesComplete` method
 	NetworkInterfacesClient                    *networkinterfaces.NetworkInterfacesClient
+	FirewallPoliciesClient                     *firewallpolicies.FirewallPoliciesClient
 	NetworkSecurityPerimeterAccessRulesClient  *networksecurityperimeteraccessrules.NetworkSecurityPerimeterAccessRulesClient
 	NetworkSecurityPerimeterAssociationsClient *networksecurityperimeterassociations.NetworkSecurityPerimeterAssociationsClient
 	NetworkSecurityPerimeterProfilesClient     *networksecurityperimeterprofiles.NetworkSecurityPerimeterProfilesClient
@@ -43,6 +45,12 @@ func NewClient(o *common.ClientOptions) (*Client, error) {
 		return nil, fmt.Errorf("building Network Interfaces Client: %+v", err)
 	}
 	o.Configure(NetworkInterfacesClient.Client, o.Authorizers.ResourceManager)
+
+	FirewallPoliciesClient, err := firewallpolicies.NewFirewallPoliciesClientWithBaseURI(o.Environment.ResourceManager)
+	if err != nil {
+		return nil, fmt.Errorf("building Firewall Policies Client: %+v", err)
+	}
+	o.Configure(FirewallPoliciesClient.Client, o.Authorizers.ResourceManager)
 
 	NetworkSecurityPerimeterAssociationsClient, err := networksecurityperimeterassociations.NewNetworkSecurityPerimeterAssociationsClientWithBaseURI(o.Environment.ResourceManager)
 	if err != nil {
@@ -84,6 +92,7 @@ func NewClient(o *common.ClientOptions) (*Client, error) {
 	return &Client{
 		BastionHostsClient:                         BastionHostsClient,
 		NetworkInterfacesClient:                    NetworkInterfacesClient,
+		FirewallPoliciesClient:                     FirewallPoliciesClient,
 		NetworkSecurityPerimeterAccessRulesClient:  NetworkSecurityPerimeterAccessRulesClient,
 		NetworkSecurityPerimeterAssociationsClient: NetworkSecurityPerimeterAssociationsClient,
 		NetworkSecurityPerimeterProfilesClient:     NetworkSecurityPerimeterProfilesClient,
